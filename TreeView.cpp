@@ -1,29 +1,29 @@
-// Template.cpp
+// TreeView.cpp
 
-#include "Template.h"
+#include "TreeView.h"
 
 // Global variables
-ListBoxWindow g_listBoxWindow;
+TreeViewWindow g_treeViewWindow;
 StatusBarWindow g_statusBarWindow;
 
-void ListBoxWindowSelectionChangedFunction( LPTSTR lpszItemText )
+void TreeViewWindowSelectionChangedFunction( LPTSTR lpszItemText )
 {
 	// Show item text on status bat window
 	g_statusBarWindow.SetText( lpszItemText );
 
-} // End of function ListBoxWindowSelectionChangedFunction
+} // End of function TreeViewWindowSelectionChangedFunction
 
-void ListBoxWindowDoubleClickFunction( LPTSTR lpszItemText )
+void TreeViewWindowDoubleClickFunction( LPTSTR lpszItemText )
 {
 	// Display item text
 	MessageBox( NULL, lpszItemText, INFORMATION_MESSAGE_CAPTION, ( MB_OK | MB_ICONINFORMATION ) );
 
-} // End of function ListBoxWindowDoubleClickFunction
+} // End of function TreeViewWindowDoubleClickFunction
 
 void OpenFileFunction( LPCTSTR lpszFilePath )
 {
-	// Add file to list box window
-	g_listBoxWindow.AddText( lpszFilePath );
+	// Add file to tree view window
+	g_treeViewWindow.InsertItem( lpszFilePath );
 
 } // End of function OpenFileFunction
 
@@ -67,17 +67,17 @@ LRESULT CALLBACK MainWindowProcedure( HWND hWndMain, UINT uMessage, WPARAM wPara
 			// Get instance
 			hInstance = ( ( LPCREATESTRUCT )lParam )->hInstance;
 
-			// Create list box window
-			if( g_listBoxWindow.Create( hWndMain, hInstance ) )
+			// Create tree view window
+			if( g_treeViewWindow.Create( hWndMain, hInstance ) )
 			{
-				// Successfully created list box window
+				// Successfully created tree view window
 				Font font;
 
 				// Get font
 				font = DEFAULT_GUI_FONT;
 
-				// Set list box window font
-				g_listBoxWindow.SetFont( font );
+				// Set tree view window font
+				g_treeViewWindow.SetFont( font );
 
 				// Create status bar window
 				if( g_statusBarWindow.Create( hWndMain, hInstance ) )
@@ -89,7 +89,7 @@ LRESULT CALLBACK MainWindowProcedure( HWND hWndMain, UINT uMessage, WPARAM wPara
 
 				} // End of successfully created status bar window
 
-			} // End of successfully created list box window
+			} // End of successfully created tree view window
 
 			// Break out of switch
 			break;
@@ -102,7 +102,7 @@ LRESULT CALLBACK MainWindowProcedure( HWND hWndMain, UINT uMessage, WPARAM wPara
 			int nClientHeight;
 			RECT rcStatus;
 			int nStatusWindowHeight;
-			int nListBoxWindowHeight;
+			int nTreeViewWindowHeight;
 
 			// Store client width and height
 			nClientWidth	= ( int )LOWORD( lParam );
@@ -116,10 +116,10 @@ LRESULT CALLBACK MainWindowProcedure( HWND hWndMain, UINT uMessage, WPARAM wPara
 
 			// Calculate window sizes
 			nStatusWindowHeight		= ( rcStatus.bottom - rcStatus.top );
-			nListBoxWindowHeight	= ( nClientHeight - nStatusWindowHeight );
+			nTreeViewWindowHeight	= ( nClientHeight - nStatusWindowHeight );
 
-			// Move list box window
-			g_listBoxWindow.Move( 0, 0, nClientWidth, nListBoxWindowHeight, TRUE );
+			// Move tree view window
+			g_treeViewWindow.Move( 0, 0, nClientWidth, nTreeViewWindowHeight, TRUE );
 
 			// Break out of switch
 			break;
@@ -129,8 +129,8 @@ LRESULT CALLBACK MainWindowProcedure( HWND hWndMain, UINT uMessage, WPARAM wPara
 		{
 			// An activate message
 
-			// Focus on list box window
-			g_listBoxWindow.SetFocus();
+			// Focus on tree view window
+			g_treeViewWindow.SetFocus();
 
 			// Break out of switch
 			break;
@@ -204,30 +204,8 @@ LRESULT CALLBACK MainWindowProcedure( HWND hWndMain, UINT uMessage, WPARAM wPara
 				{
 					// Default command
 
-					// See if command message is from list box window
-					if( ( HWND )lParam == g_listBoxWindow )
-					{
-						// Command message is from list box window
-
-						// Handle command message from list box window
-						if( !( g_listBoxWindow.HandleCommandMessage( wParam, lParam, ListBoxWindowSelectionChangedFunction, ListBoxWindowDoubleClickFunction ) ) )
-						{
-							// Command message was not handled from list box window
-
-							// Call default procedure
-							lr = DefWindowProc( hWndMain, uMessage, wParam, lParam );
-
-						} // End of command message was not handled from list box window
-
-					} // End of command message is from list box window
-					else
-					{
-						// Command message is not from list box window
-
-						// Call default procedure
-						lr = DefWindowProc( hWndMain, uMessage, wParam, lParam );
-
-					} // End of command message is not from list box window
+					// Call default procedure
+					lr = DefWindowProc( hWndMain, uMessage, wParam, lParam );
 
 					// Break out of switch
 					break;
@@ -279,9 +257,35 @@ LRESULT CALLBACK MainWindowProcedure( HWND hWndMain, UINT uMessage, WPARAM wPara
 		case WM_NOTIFY:
 		{
 			// A notify message
+			LPNMHDR lpNmHdr;
 
-			// Call default handler
-			lr = DefWindowProc( hWndMain, uMessage, wParam, lParam );
+			// Get notify message information
+			lpNmHdr = ( LPNMHDR )lParam;
+
+			// See if notify message is from tree view window
+			if( lpNmHdr->hwndFrom == g_treeViewWindow )
+			{
+				// Notify message is from tree view window
+
+				// Handle notify message from tree view window
+				if( !( g_treeViewWindow.HandleNotifyMessage( wParam, lParam, &TreeViewWindowSelectionChangedFunction, &TreeViewWindowDoubleClickFunction ) ) )
+				{
+					// Notify message was not handled from tree view window
+
+					// Call default handler
+					lr = DefWindowProc( hWndMain, uMessage, wParam, lParam );
+
+				} // End of notify message was not handled from tree view window
+
+			} // End of notify message is from tree view window
+			else
+			{
+				// Notify message is not from tree view window
+
+				// Call default handler
+				lr = DefWindowProc( hWndMain, uMessage, wParam, lParam );
+
+			} // End of notify message is not from tree view window
 
 			// Break out of switch
 			break;
