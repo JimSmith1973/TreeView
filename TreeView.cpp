@@ -3,7 +3,7 @@
 #include "TreeView.h"
 
 // Global variables
-TreeViewWindow g_treeViewWindow;
+FolderTreeViewWindow g_folderTreeViewWindow;
 StatusBarWindow g_statusBarWindow;
 
 void TreeViewWindowSelectionChangedFunction( LPTSTR lpszItemText )
@@ -22,8 +22,8 @@ void TreeViewWindowDoubleClickFunction( LPTSTR lpszItemText )
 
 void OpenFileFunction( LPCTSTR lpszFilePath )
 {
-	// Add file to tree view window
-	g_treeViewWindow.InsertItem( lpszFilePath );
+	// Add file to folder tree view window
+	g_folderTreeViewWindow.InsertItem( lpszFilePath );
 
 } // End of function OpenFileFunction
 
@@ -67,17 +67,17 @@ LRESULT CALLBACK MainWindowProcedure( HWND hWndMain, UINT uMessage, WPARAM wPara
 			// Get instance
 			hInstance = ( ( LPCREATESTRUCT )lParam )->hInstance;
 
-			// Create tree view window
-			if( g_treeViewWindow.Create( hWndMain, hInstance ) )
+			// Create folder tree view window
+			if( g_folderTreeViewWindow.Create( hWndMain, hInstance ) )
 			{
-				// Successfully created tree view window
+				// Successfully created folder tree view window
 				Font font;
 
 				// Get font
 				font = DEFAULT_GUI_FONT;
 
-				// Set tree view window font
-				g_treeViewWindow.SetFont( font );
+				// Set folder tree view window font
+				g_folderTreeViewWindow.SetFont( font );
 
 				// Create status bar window
 				if( g_statusBarWindow.Create( hWndMain, hInstance ) )
@@ -89,7 +89,7 @@ LRESULT CALLBACK MainWindowProcedure( HWND hWndMain, UINT uMessage, WPARAM wPara
 
 				} // End of successfully created status bar window
 
-			} // End of successfully created tree view window
+			} // End of successfully created folder tree view window
 
 			// Break out of switch
 			break;
@@ -118,8 +118,8 @@ LRESULT CALLBACK MainWindowProcedure( HWND hWndMain, UINT uMessage, WPARAM wPara
 			nStatusWindowHeight		= ( rcStatus.bottom - rcStatus.top );
 			nTreeViewWindowHeight	= ( nClientHeight - nStatusWindowHeight );
 
-			// Move tree view window
-			g_treeViewWindow.Move( 0, 0, nClientWidth, nTreeViewWindowHeight, TRUE );
+			// Move folder tree view window
+			g_folderTreeViewWindow.Move( 0, 0, nClientWidth, nTreeViewWindowHeight, TRUE );
 
 			// Break out of switch
 			break;
@@ -129,8 +129,8 @@ LRESULT CALLBACK MainWindowProcedure( HWND hWndMain, UINT uMessage, WPARAM wPara
 		{
 			// An activate message
 
-			// Focus on tree view window
-			g_treeViewWindow.SetFocus();
+			// Focus on folder tree view window
+			g_folderTreeViewWindow.SetFocus();
 
 			// Break out of switch
 			break;
@@ -262,30 +262,30 @@ LRESULT CALLBACK MainWindowProcedure( HWND hWndMain, UINT uMessage, WPARAM wPara
 			// Get notify message information
 			lpNmHdr = ( LPNMHDR )lParam;
 
-			// See if notify message is from tree view window
-			if( lpNmHdr->hwndFrom == g_treeViewWindow )
+			// See if notify message is from folder tree view window
+			if( lpNmHdr->hwndFrom == g_folderTreeViewWindow )
 			{
-				// Notify message is from tree view window
+				// Notify message is from folder tree view window
 
-				// Handle notify message from tree view window
-				if( !( g_treeViewWindow.HandleNotifyMessage( wParam, lParam, &TreeViewWindowSelectionChangedFunction, &TreeViewWindowDoubleClickFunction ) ) )
+				// Handle notify message from folder tree view window
+				if( !( g_folderTreeViewWindow.HandleNotifyMessage( wParam, lParam, &TreeViewWindowSelectionChangedFunction ) ) )
 				{
-					// Notify message was not handled from tree view window
+					// Notify message was not handled from folder tree view window
 
 					// Call default handler
 					lr = DefWindowProc( hWndMain, uMessage, wParam, lParam );
 
-				} // End of notify message was not handled from tree view window
+				} // End of notify message was not handled from folder tree view window
 
-			} // End of notify message is from tree view window
+			} // End of notify message is from folder tree view window
 			else
 			{
-				// Notify message is not from tree view window
+				// Notify message is not from folder tree view window
 
 				// Call default handler
 				lr = DefWindowProc( hWndMain, uMessage, wParam, lParam );
 
-			} // End of notify message is not from tree view window
+			} // End of notify message is not from folder tree view window
 
 			// Break out of switch
 			break;
@@ -392,6 +392,9 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 
 			// Update main window
 			mainWindow.Update();
+
+			// Add drives to folder tree view window
+			g_folderTreeViewWindow.AddDrives();
 
 			// Message loop
 			while( message.Get() > 0 )

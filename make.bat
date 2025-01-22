@@ -8,6 +8,7 @@ g++ -mwindows -m64 -static -Wall -Wextra TreeView.cpp ^
  ^
  ..\Classes\ArgumentListClass.cpp ^
  ..\Classes\DroppedFilesClass.cpp ^
+ ..\Classes\FolderTreeViewWindowClass.cpp ^
  ..\Classes\FontClass.cpp ^
  ..\Classes\TreeViewWindowClass.cpp ^
  ..\Classes\MenuClass.cpp ^

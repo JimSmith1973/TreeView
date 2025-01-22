@@ -12,8 +12,8 @@
 
 #include "..\Classes\ArgumentListClass.h"
 #include "..\Classes\DroppedFilesClass.h"
+#include "..\Classes\FolderTreeViewWindowClass.h"
 #include "..\Classes\FontClass.h"
-#include "..\Classes\TreeViewWindowClass.h"
 #include "..\Classes\MessageClass.h"
 #include "..\Classes\MenuClass.h"
 #include "..\Classes\StatusBarWindowClass.h"
