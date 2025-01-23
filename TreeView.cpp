@@ -396,6 +396,9 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 			// Add drives to folder tree view window
 			g_folderTreeViewWindow.AddDrives();
 
+			// ASelect current folder on folder tree view window
+			g_folderTreeViewWindow.SelectFolder();
+
 			// Message loop
 			while( message.Get() > 0 )
 			{
